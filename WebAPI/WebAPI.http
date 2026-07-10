@@ -1,0 +1,24 @@
+@WebAPI_HostAddress = https://localhost:5000
+
+GET {{WebAPI_HostAddress}}/api/wallets
+
+###
+
+POST {{WebAPI_HostAddress}}/api/wallets
+Content-Type: application/json
+
+{
+  "Name" : "MyWallet2",
+  "Balance" : 10000
+}
+
+###
+
+DELETE {{WebAPI_HostAddress}}/api/wallets/1
+
+###
+
+@id=0
+GET {{WebAPI_HostAddress}}/api/wallets/2
+
+###
