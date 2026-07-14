@@ -4,7 +4,7 @@ WebAPI - Wallets Example
 Overview
 --------
 This is a small ASP.NET Core Web API that demonstrates a basic RESTful CRUD service for a "Wallet" resource using Entity Framework Core (InMemory provider by default). 
-It includes DTO mapping, async endpoints, and OpenAPI support. Implemented automated tests for ASP.NET Core Web API endpoints using xUnit and Entity Framework Core InMemory provider.
+It includes DTO mapping, JWT authentication, async endpoints, and OpenAPI support. Implemented automated tests for ASP.NET Core Web API endpoints using xUnit and Entity Framework Core InMemory provider.
 
 Tech
 ----
