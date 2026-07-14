@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +18,22 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseInMemoryDatabase("WalletDB"));
 
+builder.Logging.AddConsole();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(jwtoptions =>
+{
+    jwtoptions.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = "https://localhost:5000",
+        ValidateAudience = true,
+        ValidAudience = "https://localhost:5000/api/wallets",
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super-secret-key-at-least-32-characters"))
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +44,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

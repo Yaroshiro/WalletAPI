@@ -3,6 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI.Models;
 using WebAPI.Data;
 using WebAPI.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -14,14 +19,28 @@ public class WalletsController : ControllerBase
         _context = context;
     }
 
-    // GET: api/Wallet
+    [HttpPost("login")]
+    public IActionResult Login(LoginRequest req)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super-secret-key-at-least-32-characters"));
+        var credentials = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken("https://localhost:5000", "https://localhost:5000/api/wallets",signingCredentials: credentials, expires:DateTime.UtcNow.AddHours(1));
+        var jwt = new JwtSecurityTokenHandler()
+            .WriteToken(token);
+
+        return Ok(new { accessToken = jwt });
+    }
+
+    // GET: api/Wallets
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<WalletDTO>>> GetWallet()
     {
         return await _context.WalletsDB.Select(w => w.ToDto()).ToListAsync();
     }
 
-    // GET: api/Wallet/5
+    // GET: api/Wallets/5
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<WalletDTO>> GetWallet(int id)
     {
@@ -35,7 +54,7 @@ public class WalletsController : ControllerBase
         return wallet.ToDto();
     }
 
-    // PUT: api/Wallet/5
+    // PUT: api/Wallets/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
     public async Task<IActionResult> PutWallet(int id, WalletDTO walletDTO)
@@ -74,7 +93,7 @@ public class WalletsController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Wallet
+    // POST: api/Wallets
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
     public async Task<ActionResult<WalletDTO>> PostWallet(WalletDTO walletDto)
@@ -88,20 +107,20 @@ public class WalletsController : ControllerBase
             Name = walletDto.Name,
             Balance = walletDto.Balance,
             CreatedAt = DateTime.UtcNow
-        };
+        };        
         _context.WalletsDB.Add(wallet);
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetWallet), new { id = wallet.Id }, wallet.ToDto());
     }
 
-    // DELETE: api/Wallet/5
+    // DELETE: api/Wallets/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteWallet(int? id)
     {
         var wallet = await _context.WalletsDB.FindAsync(id);
         if (wallet == null)
-        {
+        {            
             return NotFound();
         }
 
@@ -116,7 +135,7 @@ public class WalletsController : ControllerBase
         return _context.WalletsDB.Any(e => e.Id == id);
     }
 
-    // PATCH: api/Wallet/5
+    // PATCH: api/Wallets/5
     [HttpPatch("{id}")]
     public async Task<IActionResult> PatchWallet(int id, WalletDTO walletDTO)
     {
