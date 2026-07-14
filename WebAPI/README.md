@@ -11,6 +11,7 @@ Tech
 - .NET 10
 - ASP.NET Core Web API
 - EF Core (InMemory provider)
+- JWT bearer auth
 - OpenAPI (development only)
 
 Quick start
@@ -33,6 +34,14 @@ Endpoints
 ---------
 Base route: /api/Wallets
 
+- POST /api/Wallets/Login
+  - Returns an AccessTocken
+  - Example body:
+    {
+      "email" : "example@mail.com",
+      "password" : "testpw123"
+    }
+
 - GET /api/Wallets
   - Returns list of wallets (WalletDTO)
   - curl: curl https://localhost:5001/api/Wallets
@@ -48,7 +57,6 @@ Base route: /api/Wallets
 	  "name": "My Wallet",
 	  "balance": 100.50
 	}
-  - curl: curl -X POST -H "Content-Type: application/json" -d '{"name":"My","balance":10.0}' https://localhost:5001/api/Wallets
 
 - PUT /api/Wallets/{id}
   - Replaces/updates Name and Balance using WalletDTO.
@@ -67,8 +75,4 @@ Notes
 
 License
 -------
-Add a LICENSE file to the repo (MIT recommended for portfolio/demo projects).
-
-Contact
--------
-This repo is a small demo. If you want, I can add tests, CI, or a Dockerfile — tell me which and I will create them.
+MIT
