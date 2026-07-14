@@ -1,6 +1,16 @@
 @WebAPI_HostAddress = https://localhost:5000
 
+POST {{WebAPI_HostAddress}}/api/wallets/login
+Content-type: application/json
+{
+  "email" : "test",
+  "password" : "test"
+}
+
+###
+
 GET {{WebAPI_HostAddress}}/api/wallets
+Authorization: Bearer *insert token here*
 
 ###
 
